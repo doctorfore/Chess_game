@@ -3,15 +3,21 @@
 
 #include "ChessPiece.hh"
 
-/**
- * Student implementation of a Rook chess piece.
- * The class is defined within the Student namespace.
- */
 namespace Student
 {
-    class RookPiece : public ChessPiece
-    {
-    };
+  class RookPiece : public ChessPiece
+  {
+  public:
+    RookPiece(ChessBoard &board, Color color, int row, int column);
+    bool canMoveToLocation(int toRow, int toColumn) override;
+    const char *toString() override;
+
+  private:
+    ChessBoard *m_board;
+    Color m_color;
+    int m_row;
+    int m_col;
+  };
 }
 
 #endif

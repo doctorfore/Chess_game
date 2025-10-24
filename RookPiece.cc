@@ -34,5 +34,5 @@ bool RookPiece::canMoveToLocation(int toRow, int toColumn)
 
 const char *RookPiece::toString()
 {
-  return (m_color == White) ? "♖" : "♜";
+    return (m_color == White) ? "\xE2\x99\x96" : "\xE2\x99\x9C";
 }

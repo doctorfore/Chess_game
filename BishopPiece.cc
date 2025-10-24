@@ -35,5 +35,5 @@ bool BishopPiece::canMoveToLocation(int toRow, int toColumn)
 
 const char *BishopPiece::toString()
 {
-  return (m_color == White) ? "♗" : "♝";
+    return (m_color == White) ? "\xE2\x99\x97" : "\xE2\x99\x9D";
 }

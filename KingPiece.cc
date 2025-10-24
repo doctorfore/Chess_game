@@ -18,5 +18,5 @@ bool KingPiece::canMoveToLocation(int, int)
 
 const char *KingPiece::toString()
 {
-  return (m_color == White) ? "♔" : "♚";
+  return (m_color == White) ? "\xE2\x99\x94" : "\xE2\x99\x9A";
 }

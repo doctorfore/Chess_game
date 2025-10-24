@@ -47,5 +47,5 @@ bool PawnPiece::canMoveToLocation(int toRow, int toColumn)
 
 const char *PawnPiece::toString()
 {
-  return (m_color == White) ? "♙" : "♟";
+  return (m_color == White) ? "\xE2\x99\x99" : "\xE2\x99\x9F";
 }

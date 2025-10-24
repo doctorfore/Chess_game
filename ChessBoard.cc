@@ -85,6 +85,6 @@ bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColum
     return src->canMoveToLocation(toRow, toColumn);
 }
 
-// ---- Part 1 dummies (so it links; real logic comes in later milestones) ----
-//bool ChessBoard::movePiece(int, int, int, int) { return false; }
-//bool ChessBoard::isPieceUnderThreat(int, int)  { return false; }
+// for local tester
+bool ChessBoard::movePiece(int, int, int, int) { return false; }
+bool ChessBoard::isPieceUnderThreat(int, int)  { return false; }

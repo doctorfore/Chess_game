@@ -7,8 +7,7 @@ using Student::ChessPiece;
 
 KingPiece::KingPiece(ChessBoard &board, Color color, int row, int column)
 : ChessPiece(board, color, row, column),
-  m_board(&board), m_color(color), m_row(row), m_col(column)
-{}
+  board_(&board), color_(color), row_(row), col_(column){}
 
 bool KingPiece::canMoveToLocation(int, int)
 {
@@ -18,5 +17,5 @@ bool KingPiece::canMoveToLocation(int, int)
 
 const char *KingPiece::toString()
 {
-  return (m_color == White) ? "\xE2\x99\x94" : "\xE2\x99\x9A";
+  return (color_ == White) ? "\xE2\x99\x94" : "\xE2\x99\x9A";
 }

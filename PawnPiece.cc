@@ -7,18 +7,17 @@ using Student::ChessPiece;
 
 PawnPiece::PawnPiece(ChessBoard &board, Color color, int row, int column)
 : ChessPiece(board, color, row, column),
-  m_board(&board), m_color(color), m_row(row), m_col(column)
-{}
+  board_(&board), color_(color), row_(row), col_(column){}
 
 bool PawnPiece::canMoveToLocation(int toRow, int toColumn)
 {
-  if (toRow == m_row && toColumn == m_col) return false;
+  if (toRow == row_ && toColumn == col_) return false;
 
-  int dir  = (m_color == White) ? -1 : 1; // White up, Black down
-  int dRow = toRow - m_row;
-  int dCol = toColumn - m_col;
+  int dir  = (color_ == White) ? -1 : 1; // White up, Black down
+  int dRow = toRow - row_;
+  int dCol = toColumn - col_;
 
-  ChessPiece *dst = m_board->getPiece(toRow, toColumn);
+  ChessPiece *dst = board_->getPiece(toRow, toColumn);
 
   // Forward moves (no capture)
   if (dCol == 0)
@@ -27,11 +26,11 @@ bool PawnPiece::canMoveToLocation(int toRow, int toColumn)
     if (dRow == dir && dst == nullptr) return true;
 
     // Two steps from starting rank
-    int startRow = (m_color == Black) ? 1 : (m_board->getNumRows() - 2);
-    if (m_row == startRow && dRow == 2*dir)
+    int startRow = (color_ == Black) ? 1 : (board_->getNumRows() - 2);
+    if (row_ == startRow && dRow == 2*dir)
     {
-      int midRow = m_row + dir;
-      if (m_board->getPiece(midRow, m_col) == nullptr && dst == nullptr) return true;
+      int midRow = row_ + dir;
+      if (board_->getPiece(midRow, col_) == nullptr && dst == nullptr) return true;
     }
     return false;
   }
@@ -39,7 +38,7 @@ bool PawnPiece::canMoveToLocation(int toRow, int toColumn)
   // Diagonal capture
   if (dRow == dir && (dCol == 1 || dCol == -1))
   {
-    return (dst != nullptr) && (dst->getColor() != m_color);
+    return (dst != nullptr) && (dst->getColor() != color_);
   }
 
   return false;
@@ -47,5 +46,5 @@ bool PawnPiece::canMoveToLocation(int toRow, int toColumn)
 
 const char *PawnPiece::toString()
 {
-  return (m_color == White) ? "\xE2\x99\x99" : "\xE2\x99\x9F";
+  return (color_ == White) ? "\xE2\x99\x99" : "\xE2\x99\x9F";
 }

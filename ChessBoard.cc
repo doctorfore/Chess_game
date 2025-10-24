@@ -85,6 +85,20 @@ bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColum
     return src->canMoveToLocation(toRow, toColumn);
 }
 
+// destructor
+namespace Student {
+ChessBoard::~ChessBoard()
+{
+    // delete every allocated piece
+    for (int r = 0; r < numRows; ++r) {
+        for (int c = 0; c < numCols; ++c) {
+            ChessPiece* p = board.at(r).at(c);
+            if (p) { delete p; board.at(r).at(c) = nullptr; }
+        }
+    }
+}
+}
+
 // for local tester
 bool ChessBoard::movePiece(int, int, int, int) { return false; }
 bool ChessBoard::isPieceUnderThreat(int, int)  { return false; }

@@ -11,7 +11,6 @@ using Student::RookPiece;
 using Student::BishopPiece;
 using Student::KingPiece;
 
-// ==================== ORIGINAL displayBoard() (unchanged) ====================
 std::ostringstream ChessBoard::displayBoard()
 {
     std::ostringstream outputString;
@@ -45,15 +44,12 @@ std::ostringstream ChessBoard::displayBoard()
 
     return outputString;
 }
-// ============================================================================
 
-// Local helper (not in headers) — NOTE: non-const reference to call non-const getters
+//Local helper
 static bool inBounds(ChessBoard &b, int r, int c)
 {
     return (0 <= r && r < b.getNumRows() && 0 <= c && c < b.getNumCols());
 }
-
-// ---- Part 1: required methods ----
 
 ChessBoard::ChessBoard(int numRow, int numCol)
 : numRows(numRow), numCols(numCol), turn(White),
@@ -70,7 +66,7 @@ void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startCol
         case Pawn:   slot = new PawnPiece(*this, col, startRow, startColumn); break;
         case Rook:   slot = new RookPiece(*this, col, startRow, startColumn); break;
         case Bishop: slot = new BishopPiece(*this, col, startRow, startColumn); break;
-        case King:   slot = new KingPiece(*this, col, startRow, startColumn); break; // benign in Part 1
+        case King:   slot = new KingPiece(*this, col, startRow, startColumn); break;
     }
 }
 
@@ -90,5 +86,5 @@ bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColum
 }
 
 // ---- Part 1 dummies (so it links; real logic comes in later milestones) ----
-bool ChessBoard::movePiece(int, int, int, int) { return false; }
-bool ChessBoard::isPieceUnderThreat(int, int)  { return false; }
+//bool ChessBoard::movePiece(int, int, int, int) { return false; }
+//bool ChessBoard::isPieceUnderThreat(int, int)  { return false; }

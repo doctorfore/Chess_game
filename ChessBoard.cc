@@ -70,7 +70,7 @@ void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startCol
         case Pawn:   slot = new PawnPiece(*this, col, startRow, startColumn); break;
         case Rook:   slot = new RookPiece(*this, col, startRow, startColumn); break;
         case Bishop: slot = new BishopPiece(*this, col, startRow, startColumn); break;
-// case king
+        case King:   slot = new KingPiece(*this, col, startRow, startColumn); break; // benign in Part 1
     }
 }
 

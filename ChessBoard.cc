@@ -89,15 +89,18 @@ bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColum
 namespace Student {
 ChessBoard::~ChessBoard()
 {
-    // delete every allocated piece
+    // Delete any remaining pieces on the board
     for (int r = 0; r < numRows; ++r) {
         for (int c = 0; c < numCols; ++c) {
             ChessPiece* p = board.at(r).at(c);
-            if (p) { delete p; board.at(r).at(c) = nullptr; }
+            if (p) {
+                delete p;
+                board.at(r).at(c) = nullptr;
+            }
         }
     }
 }
-}
+} 
 
 // for local tester
 bool ChessBoard::movePiece(int, int, int, int) { return false; }

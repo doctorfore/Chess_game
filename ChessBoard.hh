@@ -23,6 +23,10 @@ namespace Student
          * *(board.at(row).at(col)) returns the ChessPiece object itself.
          */
         std::vector<std::vector<ChessPiece *>> board;
+        // add the declarations 
+        bool inBounds(int r, int c) const;
+        bool isPathClear(int fromRow, int fromCol, int toRow, int toCol);
+        void removePiece(int row, int col);
 
     public:
         /**

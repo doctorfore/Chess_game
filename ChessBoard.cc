@@ -3,52 +3,20 @@
 #include "RookPiece.hh"
 #include "BishopPiece.hh"
 #include "KingPiece.hh"
+#include <algorithm>
 
 using Student::ChessBoard;
 using Student::ChessPiece;
-using Student::PawnPiece;
-using Student::RookPiece;
-using Student::BishopPiece;
-using Student::KingPiece;
 
-std::ostringstream ChessBoard::displayBoard()
-{
+std::ostringstream ChessBoard::displayBoard() {
     std::ostringstream outputString;
-    // top scale
-    outputString << "  ";
-    for (int i = 0; i < numCols; i++){
-        outputString << i << " ";
-    }
-    outputString << std::endl << "  ";
-    // top border
-    for (int i = 0; i < numCols; i++){
-        outputString << "– ";
-    }
-    outputString << std::endl;
-
-    for (int row = 0; row < numRows; row++){
-        outputString << row << "|";
-        for (int column = 0; column < numCols; column++){
-            ChessPiece *piece = board.at(row).at(column);
-            outputString << (piece == nullptr ? " " : piece->toString()) << " ";
-        }
-        outputString << "|" << std::endl;
-    }
-
-    // bottom border
-    outputString << "  ";
-    for (int i = 0; i < numCols; i++){
-        outputString << "– ";
-    }
-    outputString << std::endl << std::endl;
-
+    // ... keep previous displayBoard
     return outputString;
 }
 
-//Local helper
-static bool inBounds(ChessBoard &b, int r, int c)
-{
-    return (0 <= r && r < b.getNumRows() && 0 <= c && c < b.getNumCols());
+// check boundry functions 
+bool ChessBoard::inBounds(int r, int c) const {
+    return (r >= 0 && r < numRows && c >= 0 && c < numCols);
 }
 
 ChessBoard::ChessBoard(int numRow, int numCol)
@@ -56,13 +24,11 @@ ChessBoard::ChessBoard(int numRow, int numCol)
   board(std::vector<std::vector<ChessPiece *>>(numRow, std::vector<ChessPiece *>(numCol, nullptr)))
 {}
 
-void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startColumn)
-{
+void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startColumn) {
     ChessPiece *&slot = board.at(startRow).at(startColumn);
     if (slot) { delete slot; slot = nullptr; }
 
-    switch (ty)
-    {
+    switch (ty) {
         case Pawn:   slot = new PawnPiece(*this, col, startRow, startColumn); break;
         case Rook:   slot = new RookPiece(*this, col, startRow, startColumn); break;
         case Bishop: slot = new BishopPiece(*this, col, startRow, startColumn); break;
@@ -70,10 +36,42 @@ void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startCol
     }
 }
 
-bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColumn)
-{
-    if (!inBounds(*this, fromRow, fromColumn)) return false;
-    if (!inBounds(*this, toRow, toColumn))     return false;
+// path check 
+bool ChessBoard::isPathClear(int fromRow, int fromCol, int toRow, int toCol) {
+    int dRow = toRow - fromRow;
+    int dCol = toCol - fromCol;
+    
+    // confirm moving directions 
+    int rowStep = (dRow == 0) ? 0 : (dRow > 0 ? 1 : -1);
+    int colStep = (dCol == 0) ? 0 : (dCol > 0 ? 1 : -1);
+    
+    int currentRow = fromRow + rowStep;
+    int currentCol = fromCol + colStep;
+    
+    // check all blocks in the path 
+    while (currentRow != toRow || currentCol != toCol) {
+        if (!inBounds(currentRow, currentCol) || board.at(currentRow).at(currentCol) != nullptr) {
+            return false; // path being bloced
+        }
+        currentRow += rowStep;
+        currentCol += colStep;
+    }
+    
+    return true;
+}
+
+// remove chess
+void ChessBoard::removePiece(int row, int col) {
+    ChessPiece*& piece = board.at(row).at(col);
+    if (piece != nullptr) {
+        delete piece;
+        piece = nullptr;
+    }
+}
+
+bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColumn) {
+    if (!inBounds(fromRow, fromColumn)) return false;
+    if (!inBounds(toRow, toColumn))     return false;
     if (fromRow == toRow && fromColumn == toColumn) return false;
 
     ChessPiece *src = board.at(fromRow).at(fromColumn);
@@ -82,14 +80,75 @@ bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColum
     ChessPiece *dst = board.at(toRow).at(toColumn);
     if (dst != nullptr && dst->getColor() == src->getColor()) return false;
 
+    // check path for chess moving on same line 
+    Type pieceType = src->getType();
+    if (pieceType == Rook || pieceType == Bishop) {
+        if (!isPathClear(fromRow, fromColumn, toRow, toColumn)) {
+            return false;
+        }
+    }
+
     return src->canMoveToLocation(toRow, toColumn);
 }
 
-// destructor
-namespace Student {
-ChessBoard::~ChessBoard()
-{
-    // Delete any remaining pieces on the board
+//  movePiece
+bool ChessBoard::movePiece(int fromRow, int fromColumn, int toRow, int toColumn) {
+    // 1. basic check
+    if (!isValidMove(fromRow, fromColumn, toRow, toColumn)) {
+        return false;
+    }
+    
+    ChessPiece* movingPiece = board.at(fromRow).at(fromColumn);
+    
+    // 2. check round 
+    if (movingPiece->getColor() != turn) {
+        return false;
+    }
+    
+    // 3. perform moving 
+    ChessPiece* targetPiece = board.at(toRow).at(toColumn);
+    
+    if (targetPiece != nullptr) {
+        removePiece(toRow, toColumn);
+    }
+    
+    board.at(toRow).at(toColumn) = movingPiece;
+    board.at(fromRow).at(fromColumn) = nullptr;
+    
+    movingPiece->setPosition(toRow, toColumn);
+    
+    turn = (turn == White) ? Black : White;
+    
+    return true;
+}
+
+// isPieceUnderThreat
+bool ChessBoard::isPieceUnderThreat(int row, int column) {
+    ChessPiece* targetPiece = board.at(row).at(column);
+    if (targetPiece == nullptr) {
+        return false;
+    }
+    
+    Color targetColor = targetPiece->getColor();
+    Color opponentColor = (targetColor == White) ? Black : White;
+    
+    for (int r = 0; r < numRows; r++) {
+        for (int c = 0; c < numCols; c++) {
+            ChessPiece* attacker = board.at(r).at(c);
+            
+            if (attacker != nullptr && attacker->getColor() == opponentColor) {
+                if (isValidMove(r, c, row, column)) {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+// classifier functions 
+ChessBoard::~ChessBoard() {
     for (int r = 0; r < numRows; ++r) {
         for (int c = 0; c < numCols; ++c) {
             ChessPiece* p = board.at(r).at(c);
@@ -100,8 +159,3 @@ ChessBoard::~ChessBoard()
         }
     }
 }
-} 
-
-// for local tester
-bool ChessBoard::movePiece(int, int, int, int) { return false; }
-bool ChessBoard::isPieceUnderThreat(int, int)  { return false; }

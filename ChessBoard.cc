@@ -5,6 +5,8 @@
 #include "KingPiece.hh"
 #include <algorithm>
 
+
+
 using Student::ChessBoard;
 using Student::ChessPiece;
 

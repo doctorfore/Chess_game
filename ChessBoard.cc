@@ -14,6 +14,8 @@ std::ostringstream ChessBoard::displayBoard() {
     return outputString;
 }
 
+
+
 // check boundry functions 
 bool ChessBoard::inBounds(int r, int c) const {
     return (r >= 0 && r < numRows && c >= 0 && c < numCols);
